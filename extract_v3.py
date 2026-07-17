@@ -101,10 +101,15 @@ while i < len(lines):
             gpau = extract_gpa(lines[i])
             i += 1
             
+        # Skip any textual status lines until the first score
+        while i < len(lines) and not re.match(r'^(\d+(?:\.\d+)?(?:\|\|\d+(?:\.\d+)?)*|Abs|\(Abs\))$', lines[i].strip()):
+            if re.match(r'^\d{12}$', lines[i]): break
+            i += 1
+            
         # Parse Sem 1 Grades
         student_grades = []
         for c_code in sem1_courses:
-            if i + 3 >= len(lines) or re.match(r'^\d{12}$', lines[i]): break
+            if i + 3 >= len(lines) or re.match(r'^\d{12}$', lines[i]) or (i+1 < len(lines) and re.match(r'^\d{12}$', lines[i+1])): break
             score_str = lines[i]
             grade_str = lines[i+1]
             pt1 = lines[i+2]
@@ -163,8 +168,13 @@ while i < len(lines):
                 gpa_sem2 = extract_gpa(lines[i])
                 i += 1
                 
+            # Skip any textual status lines until the first score
+            while i < len(lines) and not re.match(r'^(\d+(?:\.\d+)?(?:\|\|\d+(?:\.\d+)?)*|Abs|\(Abs\))$', lines[i].strip()):
+                if re.match(r'^\d{12}$', lines[i]): break
+                i += 1
+                
             for c_code in sem2_courses:
-                if i + 3 >= len(lines) or re.match(r'^\d{12}$', lines[i]): break
+                if i + 3 >= len(lines) or re.match(r'^\d{12}$', lines[i]) or (i+1 < len(lines) and re.match(r'^\d{12}$', lines[i+1])): break
                 score_str = lines[i]
                 grade_str = lines[i+1]
                 pt1 = lines[i+2]
